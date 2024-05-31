@@ -13,7 +13,7 @@ driver = webdriver.Chrome(options=chrome_options)
 driver.get('https://in.indeed.com/jobs?q=data+scientist&l=Delhi')
 
 # Create a dataframe to store job details
-df = pd.DataFrame({'Link': [], 'Job Title': [], 'Company': [], 'Location': [], 'Pay': [], 'Job Type': [], 'Shift and Schedule': [], 'Date': [], 'Job Description': []})
+df = pd.DataFrame({'link': [], 'Job Title': [], 'Company': [], 'Location': [], 'Pay': [], 'Job Type': [], 'Shift and Schedule': []})
 
 # Loop to go through each page and scrape job postings
 while True:
@@ -32,13 +32,23 @@ while True:
             link_tag = post.find('a', class_='jcs-JobTitle')
             link = link_tag.get('href') if link_tag else None
             link_full = 'https://in.indeed.com' + link if link else 'N/A'
+            link_text= str(link_full)
             name = link_tag.text.strip() if link_tag else 'N/A'
+            
+            company_tag = post.find('a', class_='css-1ioi40n e19afand0')
+            company = company_tag.text.strip() if company_tag else 'N/A'
+            
+            location_tag = post.find('div', class_='companyLocation')
+            location = location_tag.text.strip() if location_tag else 'N/A'
+            
+            salary_tag = post.find('div', class_='salary-snippet')
+            salary = salary_tag.text.strip() if salary_tag else 'N/A'
             
             # Navigate to job details page
             driver.get(link_full)
             time.sleep(3)  # Allow time for the job details page to load
             job_soup = BeautifulSoup(driver.page_source, 'html.parser')
-            
+    
             
             # Extract pay, job type, shift and schedule
             pay = job_soup.find('div', {'aria-label': 'Pay'})
@@ -54,7 +64,7 @@ while True:
             location_text = location_section.find('span').text.strip() if location_section else location
             
             jobs_list.append(
-                {'Job Title': name,'Location': location_text, 'Pay': pay_text, 'Job Type': job_type_text, 'Shift and Schedule': shift_text}
+                {'link': link_text, 'Job Title': name, 'Company': company, 'Location': location_text, 'Pay': pay_text, 'Job Type': job_type_text, 'Shift and Schedule': shift_text}
             )
             
             # Go back to the search results page
@@ -73,6 +83,7 @@ while True:
         next_button.click()
     except:
         break
+    
 
 # Save the dataframe to a CSV file
 df.to_csv('indeed_scraped_data.csv', index=False)
