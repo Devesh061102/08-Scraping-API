@@ -1,84 +1,82 @@
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-from selenium.webdriver.common.keys import Keys
 from bs4 import BeautifulSoup
 import pandas as pd
 import time
 
-# Initialize the WebDriver
-driver = webdriver.Chrome()
+# Set Chrome options to use incognito mode
+chrome_options = webdriver.ChromeOptions()
+chrome_options.add_argument("--incognito")
 
-# Navigate to Indeed website
-driver.get('https://www.indeed.com/')
+# Initialize the Chrome driver with options
+driver = webdriver.Chrome(options=chrome_options)
+driver.get('https://in.indeed.com/jobs?q=data+scientist&l=Delhi')
 
-# Input job title "data scientist"
-input_job_name = driver.find_element(By.XPATH, '//*[@id="text-input-what"]')
-input_job_name.send_keys('data scientist')
+# Create a dataframe to store job details
+df = pd.DataFrame({'Link': [], 'Job Title': [], 'Company': [], 'Location': [], 'Pay': [], 'Job Type': [], 'Shift and Schedule': [], 'Date': [], 'Job Description': []})
 
-# Input location "Delhi"
-input_location = driver.find_element(By.XPATH, '//*[@id="text-input-where"]')
-input_location.clear()  # Clear the location field first
-input_location.send_keys('Delhi')
-input_location.send_keys(Keys.RETURN)
-
-time.sleep(5)  # Wait for the page to load
-
-# Create a DataFrame to store job details
-df = pd.DataFrame({'Link': [], 'Job Title': [], 'Company': [], 'Location': [], 'Salary': [], 'Date': []})
-
-# Loop through each page of job listings
+# Loop to go through each page and scrape job postings
 while True:
-    # Parse the page source with BeautifulSoup
-    soup = BeautifulSoup(driver.page_source, 'lxml')
+    time.sleep(5)  # Allow time for the page to load
+    soup = BeautifulSoup(driver.page_source, 'html.parser')
     
-    # Find all job postings
-    postings = soup.find_all('div', class_='jobsearch-SerpJobCard unifiedRow row result clickcard')
-    
-    # Extract details for each job posting
+    # Find job postings using updated CSS selectors
+    postings = soup.find_all('div', class_='job_seen_beacon')
+
+    # List to hold the job details for this page
+    jobs_list = []
+
+    # Extract job details and add to dataframe
     for post in postings:
-        link = post.find('a', class_='jobtitle turnstileLink').get('href')
-        link_full = 'https://www.indeed.com' + link
-        name = post.find('h2', class_='title').text.strip()
-        company = post.find('span', class_='company').text.strip()
         try:
-            location = post.find('div', class_='location accessible-contrast-color-location').text.strip()
-        except:
-            location = 'N/A'
-        date = post.find('span', class_='date').text.strip()
-        try:
-            salary = post.find('span', class_='salaryText').text.strip()
-        except:
-            salary = 'N/A'
-        
-        # Append job details to the DataFrame
-        df = df.append(
-            {'Link': link_full, 'Job Title': name, 'Company': company, 'Location': location, 'Salary': salary, 'Date': date},
-            ignore_index=True
-        )
+            link_tag = post.find('a', class_='jcs-JobTitle')
+            link = link_tag.get('href') if link_tag else None
+            link_full = 'https://in.indeed.com' + link if link else 'N/A'
+            name = link_tag.text.strip() if link_tag else 'N/A'
+            
+            # Navigate to job details page
+            driver.get(link_full)
+            time.sleep(3)  # Allow time for the job details page to load
+            job_soup = BeautifulSoup(driver.page_source, 'html.parser')
+            
+            
+            # Extract pay, job type, shift and schedule
+            pay = job_soup.find('div', {'aria-label': 'Pay'})
+            pay_text = pay.find('div', {'class': 'js-match-insights-provider-tvvxwd ecydgvn1'}).text.strip() if pay else 'N/A'
 
-    # Check if there is a 'Next' button to navigate to the next page
+            job_type = job_soup.find('div', {'aria-label': 'Job type'})
+            job_type_text = job_type.find('div', {'class': 'js-match-insights-provider-tvvxwd ecydgvn1'}).text.strip() if job_type else 'N/A'
+
+            shift = job_soup.find('div', {'aria-label': 'Shift and schedule'})
+            shift_text = shift.find('div', {'class': 'js-match-insights-provider-tvvxwd ecydgvn1'}).text.strip() if shift else 'N/A'
+
+            location_section = job_soup.find('div', {'id': 'jobLocationText'})
+            location_text = location_section.find('span').text.strip() if location_section else location
+            
+            jobs_list.append(
+                {'Job Title': name,'Location': location_text, 'Pay': pay_text, 'Job Type': job_type_text, 'Shift and Schedule': shift_text}
+            )
+            
+            # Go back to the search results page
+            driver.back()
+            time.sleep(3)  # Allow time for the search results page to reload
+
+        except Exception as e:
+            print(f"Error extracting job details: {e}")
+
+    # Concatenate the new jobs to the existing dataframe
+    df = pd.concat([df, pd.DataFrame(jobs_list)], ignore_index=True)
+
+    # Check for 'Next' button to go to the next page
     try:
-        button = soup.find('a', attrs={'aria-label': 'Next'}).get('href')
-        driver.get('https://www.indeed.com' + button)
-        time.sleep(5)  # Wait for the next page to load
+        next_button = driver.find_element(By.XPATH, '//a[contains(@aria-label, "Next")]')
+        next_button.click()
     except:
-        break  # Exit the loop if no 'Next' button is found
+        break
 
-# Process date and sort the DataFrame
-df['Date_num'] = df['Date'].apply(lambda x: x[:2].strip())
-
-def integer(x):
-    try:
-        return int(x)
-    except:
-        return x
-
-df['Date_new'] = df['Date_num'].apply(integer)
-df.sort_values(by=['Date_new', 'Salary'], inplace=True)
-
-# Reorder columns and save to CSV
-df = df[['Link', 'Job Title', 'Company', 'Location', 'Salary', 'Date']]
+# Save the dataframe to a CSV file
 df.to_csv('indeed_scraped_data.csv', index=False)
+print("Scraping completed and data saved to indeed_scraped_data.csv")
 
-# Close the WebDriver
+# Close the browser
 driver.quit()
