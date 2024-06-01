@@ -58,7 +58,7 @@ def get_weather():
         return jsonify({'error': 'Invalid city'}), 400
 
     zip_code = zip_codes[city]
-    api_key = '902ff985f8412a5ff100f345bc71c096'  # Replace with your actual API key
+    api_key = 'Key'  # Replace with your actual API key
 
     geocode_url = f'http://api.openweathermap.org/geo/1.0/zip?zip={zip_code},IN&appid={api_key}'
     geocode_response = requests.get(geocode_url)
@@ -94,7 +94,7 @@ def get_weather():
     }
     weather_info_df = pd.DataFrame([weather_info])
 
-    # Check if weather_data.csv exists, if not, create an empty DataFrame
+    # Checking if weather_data.csv exists, if not, creating an empty DataFrame
     if not os.path.exists('weather_data.csv'):
         df = pd.DataFrame(columns=['city', 'latitude', 'longitude', 'temperature', 'humidity', 'description', 'timestamp'])
     else:
