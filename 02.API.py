@@ -58,7 +58,7 @@ def get_weather():
         return jsonify({'error': 'Invalid city'}), 400
 
     zip_code = zip_codes[city]
-    api_key = '902ff985f8412a5ff100f345bc71c096'  # Replace with your actual API key
+    api_key = 'Key'  # Replace with your actual API key
 
     geocode_url = f'http://api.openweathermap.org/geo/1.0/zip?zip={zip_code},IN&appid={api_key}'
     geocode_response = requests.get(geocode_url)
