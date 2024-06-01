@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stored Weather Data</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1 class="mt-4">Stored Weather Data</h1>
+        {% if data %}
+        <table class="table table-bordered table-striped mt-4">
+            <thead class="thead-dark">
+                <tr>
+                    <th>City</th>
+                    <th>Latitude</th>
+                    <th>Longitude</th>
+                    <th>Temperature</th>
+                    <th>Humidity</th>
+                    <th>Description</th>
+                    <th>Timestamp</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in data %}
+                <tr>
+                    <td>{{ row.city }}</td>
+                    <td>{{ row.latitude }}</td>
+                    <td>{{ row.longitude }}</td>
+                    <td>{{ row.temperature }}</td>
+                    <td>{{ row.humidity }}</td>
+                    <td>{{ row.description }}</td>
+                    <td>{{ row.timestamp }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p>No weather data found.</p>
+        {% endif %}
+        <a href="/" class="btn btn-primary mt-3">Back to Home</a>
+    </div>
+</body>
+</html>

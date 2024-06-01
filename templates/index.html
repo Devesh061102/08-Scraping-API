@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Data API</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Weather Data API</h1>
+        <p>Welcome to the Weather Data API. Use the instructions below to fetch weather data for various Indian cities.</p>
+        
+        <h2>Instructions</h2>
+        <p>Select a city to fetch its weather data:</p>
+        <form action="/weather" method="get">
+            <div class="form-group">
+                <label for="city">City:</label>
+                <select name="city" id="city" class="form-control">
+                    <option value="Delhi">Delhi - 110001</option>
+                    <option value="Mumbai">Mumbai - 400001</option>
+                    <option value="Kolkata">Kolkata - 700001</option>
+                    <option value="Chennai">Chennai - 600001</option>
+                    <option value="Bangalore">Bangalore - 560001</option>
+                    <option value="Hyderabad">Hyderabad - 500001</option>
+                    <option value="Pune">Pune - 411001</option>
+                    <option value="Ahmedabad">Ahmedabad - 380001</option>
+                    <option value="Jaipur">Jaipur - 302001</option>
+                    <option value="Lucknow">Lucknow - 226001</option>
+                    <option value="Surat">Surat - 395001</option>
+                    <option value="Kanpur">Kanpur - 208001</option>
+                    <option value="Nagpur">Nagpur - 440001</option>
+                    <option value="Indore">Indore - 452001</option>
+                    <option value="Thane">Thane - 400601</option>
+                    <option value="Bhopal">Bhopal - 462001</option>
+                    <option value="Visakhapatnam">Visakhapatnam - 530001</option>
+                    <option value="Pimpri">Pimpri - 411018</option>
+                    <option value="Patna">Patna - 800001</option>
+                    <option value="Vadodara">Vadodara - 390001</option>
+                    <option value="Ghaziabad">Ghaziabad - 201001</option>
+                    <option value="Ludhiana">Ludhiana - 141001</option>
+                    <option value="Agra">Agra - 282001</option>
+                    <option value="Nashik">Nashik - 422001</option>
+                    <option value="Faridabad">Faridabad - 121001</option>
+                    <option value="Meerut">Meerut - 250001</option>
+                    <option value="Rajkot">Rajkot - 360001</option>
+                    <option value="Kalyan">Kalyan - 421301</option>
+                    <option value="Vasai">Vasai - 401201</option>
+                    <option value="Varanasi">Varanasi - 221001</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Get Weather</button>
+        </form>
+        
+        <h2 class="mt-4">View Stored Data</h2>
+        <form action="/weather_data" method="get">
+            <button type="submit" class="btn btn-secondary">View Stored Weather Data</button>
+        </form>
+    </div>
+</body>
+</html>
