@@ -94,7 +94,7 @@ def get_weather():
     }
     weather_info_df = pd.DataFrame([weather_info])
 
-    # Check if weather_data.csv exists, if not, create an empty DataFrame
+    # Checking if weather_data.csv exists, if not, creating an empty DataFrame
     if not os.path.exists('weather_data.csv'):
         df = pd.DataFrame(columns=['city', 'latitude', 'longitude', 'temperature', 'humidity', 'description', 'timestamp'])
     else:
