@@ -128,25 +128,3 @@ if __name__ == '__main__':
     app.run(debug=True)
 
 
-### Part 2: Creating Your Own API ###
-
-# @app.route('/jobs', methods=['GET'])
-# def get_jobs():
-#     """
-#     Endpoint to fetch all jobs data.
-#     """
-#     return jobs_df.to_json(orient='records')
-
-# @app.route('/jobs/<int:job_id>', methods=['GET'])
-# def get_job(job_id):
-#     """
-#     Endpoint to fetch a specific job by ID.
-#     """
-#     if 0 <= job_id < len(jobs_df):
-#         job = jobs_df.iloc[job_id].to_dict()
-#         return jsonify(job)
-#     else:
-#         return jsonify({'error': 'Job not found'}), 404
-
-# if __name__ == "__main__":
-#     app.run(debug=True)
