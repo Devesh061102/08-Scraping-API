@@ -1,0 +1,22 @@
+[
+    {
+        "name": "Green Apple Mojito",
+        "price": 160
+    },
+    {
+        "name": "Momos",
+        "price": 60
+    },
+    {
+        "name": "Pizza",
+        "price": 250
+    },
+    {
+        "name": "Burger",
+        "price": 120
+    },
+    {
+        "name": "Pasta",
+        "price": 200
+    }
+]
