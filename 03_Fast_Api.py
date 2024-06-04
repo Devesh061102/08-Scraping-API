@@ -66,3 +66,6 @@ if __name__ == '__main__':
     
 # http://127.0.0.1:8000/docs
 # uvicorn test:app --reload
+
+# After we restart the server the data get lost and also get reset as 
+# it was in the items.json file so we need a DATABASE to permanently store our data
